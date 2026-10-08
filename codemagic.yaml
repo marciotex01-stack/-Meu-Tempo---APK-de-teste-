@@ -1,0 +1,22 @@
+workflows:
+  android-apk-teste:
+    name: Meu Tempo - APK de teste
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      node: 22
+      java: 17
+    scripts:
+      - name: Instalar dependencias
+        script: npm install
+      - name: Adicionar pacotes do PIN e do salvamento (versoes certas para o Expo)
+        script: npx expo install expo-secure-store expo-crypto @react-native-async-storage/async-storage
+      - name: Gerar projeto Android nativo
+        script: npx expo prebuild --platform android --clean
+      - name: Compilar APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
